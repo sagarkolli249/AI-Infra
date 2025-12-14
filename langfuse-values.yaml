@@ -21,16 +21,21 @@ clickhouse:
     password: "clickhousepassword"
   shards: 1
   replicas: 1
-  resources:
-    requests:
-      cpu: "500m"
-      memory: "1Gi"
+
 
 global:
   storageClass: gp2   # EKS example
 
 zookeeper:
   replicaCount: 1
+  resources: {}
+
+
+s3:
+  auth:
+    rootPassword:
+      value: "minio123"   # temporary for dev
+  resources: {}
 
 
 
