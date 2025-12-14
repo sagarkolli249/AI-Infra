@@ -1,7 +1,7 @@
 langfuse:
   salt: "eDHOjeq8x+f1fh9oXNKf9Q12hFJI9gelI8W8CHQ1Ilk=" # Generate via `openssl rand -hex 32`
 nextauth:
-  secret: "your-nextauth-secret"
+  secret: "YEu+EEH2KN1aZ/BP6DAPxd98JlpeVeVZSUR8r6rddSQ="
 postgresql:
   enabled: true # Set to false if using external RDS
   auth:
@@ -9,6 +9,6 @@ postgresql:
 clickhouse:
   enabled: true
   auth:
-    password: "your-clickhouse-password"
+    password: "clickhousepassword"
 
 
