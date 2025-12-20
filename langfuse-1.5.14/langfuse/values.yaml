@@ -1,59 +1,79 @@
 global:
   security:
-    allowInsecureImages: true
-nameOverride: ''
-fullnameOverride: ''
+    allowInsecureImages: false
+  defaultStorageClass: gp2
+  storageClass: gp2
+
+nameOverride: ""
+fullnameOverride: ""
+
 langfuse:
   logging:
     level: info
     format: text
+
+  # Langfuse SALT (required)
   salt:
-    value: ''
+    value: ""
     secretKeyRef:
-      name: ''
-      key: ''
+      name: langfuse-app-secrets
+      key: LANGFUSE_SALT
+
+  # Optional license key
   licenseKey:
-    value: ''
+    value: ""
     secretKeyRef:
-      name: ''
-      key: ''
-  allowedOrganizationCreators: []
+      name: langfuse-app-secrets
+      key: LANGFUSE_LICENSE_KEY
+
+  # Encryption key (recommended)
   encryptionKey:
-    value: ''
+    value: ""
     secretKeyRef:
-      name: ''
-      key: ''
+      name: langfuse-app-secrets
+      key: LANGFUSE_ENCRYPTION_KEY
+
+  allowedOrganizationCreators: []
+
   features:
     telemetryEnabled: true
     signUpDisabled: false
     experimentalFeaturesEnabled: false
+
   nodeEnv: production
+
   serviceAccount:
     create: true
     annotations: {}
-    name: ''
+    name: ""
+
   smtp:
-    connectionUrl: ''
-    fromAddress: ''
+    # If you use SMTP, put full URL in secret and reference via additionalEnv in web/worker if needed
+    connectionUrl: ""
+    fromAddress: ""
+
   ingress:
     enabled: true
     additionalLabels: {}
     annotations: {}
-    className: nginx
+    className: ""
     hosts:
-    - host: langfuse.aigfintinc.com
-      paths:
-      - path: /
-        pathType: ImplementationSpecific
+      - host: langfuse.aigfintinc.com
+        paths:
+          - path: /
+            pathType: Prefix
     tls:
       enabled: false
-      secretName: ''
+      secretName: ""
+
   podSecurityContext: {}
   securityContext: {}
+
   nodeSelector: {}
   tolerations: []
   affinity: {}
   dnsConfig: {}
+
   pod:
     annotations: {}
     labels: {}
@@ -61,19 +81,23 @@ langfuse:
   deployment:
     annotations: {}
     strategy: {}
+
   replicas: 1
   revisionHistoryLimit: 10
   resources: {}
+
   image:
     tag: null
     pullPolicy: Always
     pullSecrets: []
+
   additionalEnv: []
   extraContainers: []
   extraVolumes: []
   extraInitContainers: []
   extraVolumeMounts: []
   extraLifecycle: {}
+
   web:
     image:
       repository: langfuse/langfuse
@@ -107,8 +131,8 @@ langfuse:
       pollingInterval: 30
       triggerType: cpu
       metricType: Utilization
-      value: '50'
-      containerName: ''
+      value: "50"
+      containerName: ""
     hpa:
       enabled: false
       minReplicas: 1
@@ -136,6 +160,7 @@ langfuse:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
+
   worker:
     image:
       repository: langfuse/langfuse-worker
@@ -162,8 +187,8 @@ langfuse:
       pollingInterval: 30
       triggerType: cpu
       metricType: Utilization
-      value: '50'
-      containerName: ''
+      value: "50"
+      containerName: ""
     hpa:
       enabled: false
       minReplicas: 1
@@ -182,191 +207,199 @@ langfuse:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
+
   nextauth:
-    url: http://localhost:3000
+    url: https://langfuse.aigfintinc.com
     secret:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-app-secrets
+        key: NEXTAUTH_SECRET
+
 postgresql:
   deploy: true
-  host: ''
+  host: ""
   port: null
-  args: ''
-  directUrl: ''
-  shadowDatabaseUrl: ''
+  args: ""
+  directUrl: ""
+  shadowDatabaseUrl: ""
   image:
-    repository: bitnamilegacy/postgresql
+    repository: bitnami/postgresql
+
   auth:
     username: postgres
-    password: ''
-    existingSecret: ''
+    # use existing secret, do NOT keep password in values
+    password: ""
+    existingSecret: langfuse-postgres-secret
     secretKeys:
-      userPasswordKey: password
+      userPasswordKey: postgres-password
     database: postgres_langfuse
-    args: ''
+    args: ""
+
   migration:
     autoMigrate: true
+
   architecture: standalone
   primary:
     service:
       ports:
         postgresql: 5432
-    persistence:
-      storageClass: gp2
+
 redis:
   deploy: true
-  host: ''
+  host: ""
   port: 6379
   image:
-    repository: bitnamilegacy/valkey
+    repository: bitnami/valkey
+
   tls:
     enabled: false
-    caPath: ''
-    certPath: ''
-    keyPath: ''
+    caPath: ""
+    certPath: ""
+    keyPath: ""
+
   auth:
-    username: null
-    password: ''
-    existingSecret: ''
-    existingSecretPasswordKey: ''
+    # IMPORTANT: keep username default unless you know you’re using ACL users
+    username: default
+    password: ""
+    existingSecret: langfuse-redis-secret
+    existingSecretPasswordKey: valkey-password
     database: 0
+
   cluster:
     enabled: false
     nodes: []
   architecture: standalone
+
   primary:
     extraFlags:
-    - --maxmemory-policy noeviction
-    persistence:
-      enabled: false
+      - --maxmemory-policy noeviction
+
 clickhouse:
   deploy: true
-  host: ''
+  host: ""
   httpPort: 8123
   nativePort: 9000
   database: default
   image:
-    repository: bitnamilegacy/clickhouse
+    repository: bitnami/clickhouse
+
   zookeeper:
     image:
-      repository: bitnamilegacy/zookeeper
-    resources:
-      limits:
-        cpu: null
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
+      repository: bitnami/zookeeper
+
   auth:
     username: default
-    password: ''
-    existingSecret: ''
-    existingSecretKey: ''
+    password: ""
+    existingSecret: langfuse-clickhouse-secret
+    existingSecretKey: clickhouse-password
+
   migration:
-    url: ''
+    url: ""
     ssl: false
     autoMigrate: true
-  clusterEnabled: false
+
+  # (you can tune these later; these are heavy by default)
+  clusterEnabled: true
   shards: 1
-  replicaCount: 1
-  resourcesPreset: small
-  persistence:
-    storageClass: gp2
-  resources:
-    requests:
-      cpu: 500m
-      memory: 2Gi
-    limits:
-      memory: 4Gi
+  replicaCount: 3
+  resourcesPreset: 2xlarge
+
 s3:
   deploy: true
   storageProvider: s3
   image:
-    repository: bitnamilegacy/minio
-  bucket: ''
+    repository: bitnami/minio
+
+  bucket: ""
   region: auto
-  endpoint: ''
+  endpoint: ""
   forcePathStyle: true
+
   accessKeyId:
-    value: ''
+    value: ""
     secretKeyRef:
-      name: ''
-      key: ''
+      name: langfuse-s3-secret
+      key: S3_ACCESS_KEY_ID
   secretAccessKey:
-    value: ''
+    value: ""
     secretKeyRef:
-      name: ''
-      key: ''
+      name: langfuse-s3-secret
+      key: S3_SECRET_ACCESS_KEY
+
   gcs:
     credentials:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: GCS_CREDENTIALS_JSON
+
   concurrency:
     reads: 50
     writes: 50
+
   eventUpload:
-    bucket: ''
-    prefix: ''
-    region: ''
-    endpoint: ''
+    bucket: ""
+    prefix: ""
+    region: ""
+    endpoint: ""
     forcePathStyle: null
     accessKeyId:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: S3_ACCESS_KEY_ID
     secretAccessKey:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: S3_SECRET_ACCESS_KEY
+
   batchExport:
     enabled: true
-    bucket: ''
-    prefix: ''
-    region: ''
-    endpoint: ''
+    bucket: ""
+    prefix: ""
+    region: ""
+    endpoint: ""
     forcePathStyle: null
     accessKeyId:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: S3_ACCESS_KEY_ID
     secretAccessKey:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: S3_SECRET_ACCESS_KEY
+
   mediaUpload:
     enabled: true
-    bucket: ''
-    prefix: ''
-    region: ''
-    endpoint: ''
+    bucket: ""
+    prefix: ""
+    region: ""
+    endpoint: ""
     forcePathStyle: null
     accessKeyId:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: S3_ACCESS_KEY_ID
     secretAccessKey:
-      value: ''
+      value: ""
       secretKeyRef:
-        name: ''
-        key: ''
+        name: langfuse-s3-secret
+        key: S3_SECRET_ACCESS_KEY
     maxContentLength: 1000000000
     downloadUrlExpirySeconds: 3600
+
   defaultBuckets: langfuse
+
   auth:
     rootUser: minio
-    rootPassword: ''
-    existingSecret: ''
-    rootUserSecretKey: ''
-    rootPasswordSecretKey: ''
-  persistence:
-    storageClass: gp2
+    rootPassword: ""
+    existingSecret: langfuse-s3-minio-secret
+    rootUserSecretKey: root-user
+    rootPasswordSecretKey: root-password
+
 extraManifests: []
