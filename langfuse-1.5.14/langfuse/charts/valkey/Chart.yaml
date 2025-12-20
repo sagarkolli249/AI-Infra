@@ -1,22 +1,16 @@
 annotations:
   category: Database
-  images: |
-    - name: kubectl
-      image: docker.io/bitnami/kubectl:1.32.2-debian-12-r0
-    - name: os-shell
-      image: docker.io/bitnami/os-shell:12-debian-12-r37
-    - name: redis-exporter
-      image: docker.io/bitnami/redis-exporter:1.67.0-debian-12-r7
-    - name: valkey
-      image: docker.io/bitnami/valkey:8.0.2-debian-12-r2
-    - name: valkey-sentinel
-      image: docker.io/bitnami/valkey-sentinel:8.0.2-debian-12-r2
+  images: "- name: kubectl\n  image: docker.io/bitnami/kubectl:1.32.2-debian-12-r0\n\
+    - name: os-shell\n  image: docker.io/bitnami/os-shell:12-debian-12-r37\n- name:\
+    \ redis-exporter\n  image: docker.io/bitnami/redis-exporter:1.67.0-debian-12-r7\n\
+    - name: valkey\n  image: docker.io/bitnami/valkey:8.0.2-debian-12-r2\n- name:\
+    \ valkey-sentinel\n  image: docker.io/bitnami/valkey-sentinel:8.0.2-debian-12-r2\n"
   licenses: Apache-2.0
 apiVersion: v2
 appVersion: 8.0.2
 dependencies:
 - name: common
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: file://charts/common
   tags:
   - bitnami-common
   version: 2.x.x

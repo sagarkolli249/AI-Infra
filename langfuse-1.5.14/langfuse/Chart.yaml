@@ -3,24 +3,24 @@ appVersion: 3.137.0
 dependencies:
 - condition: postgresql.deploy
   name: postgresql
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: file://charts/postgresql
   version: 16.4.9
 - condition: clickhouse.deploy
   name: clickhouse
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: file://charts/clickhouse
   version: 8.0.5
 - alias: redis
   condition: redis.deploy
   name: valkey
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: file://charts/valkey
   version: 2.2.4
 - alias: s3
   condition: s3.deploy
   name: minio
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: file://charts/minio
   version: 14.10.5
 - name: common
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: file://charts/common
   version: 2.30.0
 description: Open source LLM engineering platform - LLM observability, metrics, evaluations,
   prompt management.
