@@ -281,7 +281,7 @@ clickhouse:
   httpPort: 8123
   nativePort: 9000
   database: default
-  image:
+  image:  
     repository: bitnamilegacy/clickhouse
 
   zookeeper:
@@ -310,6 +310,12 @@ s3:
   storageProvider: s3
   image:
     repository: bitnamilegacy/minio
+  resourcesPreset: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
 
   bucket: ""
   region: auto
@@ -326,6 +332,9 @@ s3:
     secretKeyRef:
       name: langfuse-s3-secret
       key: S3_SECRET_ACCESS_KEY
+
+
+
 
   gcs:
     credentials:
