@@ -21,7 +21,7 @@ langfuse:
 
   # Optional license key
   licenseKey:
-    value: ""
+    value: 
     secretKeyRef:
       name: langfuse-app-secrets
       key: LANGFUSE_LICENSE_KEY
@@ -31,7 +31,7 @@ langfuse:
     value: ""
     secretKeyRef:
       name: langfuse-app-secrets
-      key: LANGFUSE_ENCRYPTION_KEY
+      key:  
 
   allowedOrganizationCreators: []
 
@@ -287,6 +287,13 @@ clickhouse:
   zookeeper:
     image:
       repository: bitnamilegacy/zookeeper
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+    
 
   auth:
     username: default
@@ -304,6 +311,7 @@ clickhouse:
   shards: 1
   replicaCount: 3
   resourcesPreset: 2xlarge
+
 
 s3:
   deploy: true
