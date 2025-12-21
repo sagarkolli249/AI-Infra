@@ -250,7 +250,7 @@ redis:
   host: ""
   port: 6379
   image:
-    repository: bitnami/valkey
+    repository:  bitnamilegacy/valkey
 
   tls:
     enabled: false
@@ -282,11 +282,11 @@ clickhouse:
   nativePort: 9000
   database: default
   image:
-    repository: bitnami/clickhouse
+    repository: bitnamilegacy/clickhouse
 
   zookeeper:
     image:
-      repository: bitnami/zookeeper
+      repository: bitnamilegacy/zookeeper
 
   auth:
     username: default
@@ -309,7 +309,7 @@ s3:
   deploy: true
   storageProvider: s3
   image:
-    repository: bitnami/minio
+    repository: bitnamilegacy/minio
 
   bucket: ""
   region: auto
