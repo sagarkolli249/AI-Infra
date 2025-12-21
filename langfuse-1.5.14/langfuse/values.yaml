@@ -224,8 +224,8 @@ postgresql:
   directUrl: ""
   shadowDatabaseUrl: ""
   image:
-    repository: bitnami/postgresql
-
+    repository: bitnamilegacy/postgresql
+    tag: 17.3.0-debian-12-r1
   auth:
     username: postgres
     # use existing secret, do NOT keep password in values
