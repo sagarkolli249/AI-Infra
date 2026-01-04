@@ -5,34 +5,38 @@ global:
   storageClass: gp2
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "test-postgresql"
 
 langfuse:
+  postgresql:
+    hostname: test-postgresql
   logging:
     level: info
     format: text
-
   # Langfuse SALT (required)
   salt:
-    value: ""
-    secretKeyRef:
+     secretKeyRef:
       name: langfuse-app-secrets
       key: LANGFUSE_SALT
 
+  
   # Optional license key
   licenseKey:
-    value: 
     secretKeyRef:
       name: langfuse-app-secrets
       key: LANGFUSE_LICENSE_KEY
 
   # Encryption key (recommended)
   encryptionKey:
-    value: ""
     secretKeyRef:
       name: langfuse-app-secrets
       key:  
-
+  
+  nextauth:
+    secret:
+      secretKeyRef:
+        name: langfuse-app-secrets
+        key: NEXTAUTH_SECRET
   allowedOrganizationCreators: []
 
   features:
@@ -160,6 +164,8 @@ langfuse:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
+    env:
+      DATABASE_HOST: test
 
   worker:
     image:
@@ -217,7 +223,9 @@ langfuse:
         key: NEXTAUTH_SECRET
 
 postgresql:
+  enabled: true
   deploy: true
+  fullnameOverride: test-postgresql
   host: ""
   port: null
   args: ""
@@ -229,12 +237,13 @@ postgresql:
   auth:
     username: postgres
     # use existing secret, do NOT keep password in values
-    password: ""
+    password: "DUMMY_VALUE_REQUIRED_BY_HELM"
     existingSecret: langfuse-postgres-secret
     secretKeys:
       userPasswordKey: postgres-password
     database: postgres_langfuse
     args: ""
+    
 
   migration:
     autoMigrate: true
@@ -261,7 +270,7 @@ redis:
   auth:
     # IMPORTANT: keep username default unless you know you’re using ACL users
     username: default
-    password: ""
+    password: "DUMMY_VALUE_REQUIRED_BY_HELM"
     existingSecret: langfuse-redis-secret
     existingSecretPasswordKey: valkey-password
     database: 0
@@ -297,7 +306,7 @@ clickhouse:
 
   auth:
     username: default
-    password: ""
+    password: "DUMMY_VALUE_REQUIRED_BY_HELM"
     existingSecret: langfuse-clickhouse-secret
     existingSecretKey: clickhouse-password
 
@@ -323,6 +332,13 @@ s3:
     requests:
       cpu: 250m
       memory: 256Mi
+      ephemeral-storage: 50Mi
+    limits:
+      memory: 384Mi
+      ephemeral-storage: 2Gi
+
+
+
 
 
   bucket: ""
@@ -414,7 +430,7 @@ s3:
 
   auth:
     rootUser: minio
-    rootPassword: ""
+    rootPassword: "DUMMY_VALUE_REQUIRED_BY_HELM"
     existingSecret: langfuse-s3-minio-secret
     rootUserSecretKey: root-user
     rootPasswordSecretKey: root-password
