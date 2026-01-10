@@ -68,7 +68,7 @@ Return PostgreSQL hostname
 {{- if .Values.postgresql.host }}
 {{- .Values.postgresql.host }}
 {{- else if .Values.postgresql.deploy }}
-{{- printf "%s-postgresql" (include "langfuse.fullname" .) -}}
+{{- printf "%s-postgresql" (include "postgresql.v1.primary.fullname" .) -}}
 {{- end }}
 {{- end }}
 

@@ -4,10 +4,13 @@ global:
   defaultStorageClass: gp2
   storageClass: gp2
 
-nameOverride: ""
-fullnameOverride: "test-postgresql"
 
 langfuse:
+  additionalEnv:
+    - name: CLICKHOUSE_URL
+      value: "http://test-clickhouse:8123"
+    - name: CLICKHOUSE_MIGRATION_URL
+      value: "clickhouse://test-clickhouse:9000"
   postgresql:
     hostname: test-postgresql
   logging:
@@ -164,8 +167,7 @@ langfuse:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
-    env:
-      DATABASE_HOST: test
+
 
   worker:
     image:
@@ -225,7 +227,7 @@ langfuse:
 postgresql:
   enabled: true
   deploy: true
-  fullnameOverride: test-postgresql
+  fullnameOverride: test-langfuse-postgresql
   host: ""
   port: null
   args: ""
@@ -237,7 +239,6 @@ postgresql:
   auth:
     username: postgres
     # use existing secret, do NOT keep password in values
-    password: "DUMMY_VALUE_REQUIRED_BY_HELM"
     existingSecret: langfuse-postgres-secret
     secretKeys:
       userPasswordKey: postgres-password
@@ -256,7 +257,7 @@ postgresql:
 
 redis:
   deploy: true
-  host: ""
+  host: "test-redis-primary"
   port: 6379
   image:
     repository:  bitnamilegacy/valkey
@@ -286,7 +287,7 @@ redis:
 
 clickhouse:
   deploy: true
-  host: ""
+  host: test-clickhouse
   httpPort: 8123
   nativePort: 9000
   database: default
@@ -301,12 +302,8 @@ clickhouse:
       requests:
         cpu: 250m
         memory: 256Mi
-
-    
-
   auth:
     username: default
-    password: "DUMMY_VALUE_REQUIRED_BY_HELM"
     existingSecret: langfuse-clickhouse-secret
     existingSecretKey: clickhouse-password
 
